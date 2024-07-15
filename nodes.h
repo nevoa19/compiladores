@@ -2,6 +2,7 @@
 #include <vector>
 #include <map>
 #include <set>
+#include <stack> 
 
 extern int errorcount;
 extern int yylineno;
@@ -9,10 +10,11 @@ extern char *build_file_name;
 
 using namespace std;
 
+// Base class for all nodes
 class Node {
 protected:
-    vector<Node*> children;
-    int lineno;
+    vector<Node*> children; // Child nodes
+    int lineno; // Line number where the node is found
 
 public:
     Node() {
@@ -35,6 +37,7 @@ public:
     }
 };
 
+// Represents the entire program
 class Program : public Node {
 public:
     virtual string toStr() override {
@@ -42,9 +45,10 @@ public:
     }
 };
 
+// Represents a type declaration
 class TypeDec : public Node {
 protected:
-    int type;
+    int type; // Type identifier
 
 public:
     TypeDec(int t){
@@ -59,15 +63,35 @@ public:
             return "iderennon";
         } else if (type == 4) {
             return "engos";
-        } else {
-            return "sem tipo";
-        }
+        } 
+        else return "sem tipo";
     }
 };
 
+// Represents an identifier
+class Ident : public Node{
+protected:
+    string name;
+
+public:
+    Ident(const string n){
+        name = n;
+    }
+
+    const string getName(){
+        return name;
+    }
+
+    virtual string toStr() override{
+        return name;
+    }
+};
+
+// Represents an integer value
 class Integer : public Node {
 protected:
-    int value;
+    int value; // Integer value
+
 public:
     Integer(const int v) {
         value = v;
@@ -78,9 +102,11 @@ public:
     }
 };
 
+// Represents a float value
 class Float : public Node {
 protected:
-    float value;
+    float value; // Float value
+
 public:
     Float(const float v) {
         value = v;
@@ -91,27 +117,11 @@ public:
     }
 };
 
-class Ident : public Node {
-protected:
-    string name;
-public:
-    Ident(const string n) {
-        name = n;
-    }
-
-    const string getName() {
-        return name;
-    }
-
-    virtual string toStr() override {
-        return name;
-    }
-};
-
-
+// Represents a boolean value
 class Boolean : public Node {
 protected:
-    bool value;
+    bool value; // Boolean value
+
 public:
     Boolean(bool v) : value(v) {}
 
@@ -120,30 +130,122 @@ public:
     }
 };
 
-class Variable : public Node {
+// Represents a string value
+class String : public Node {
+protected:
+    string value; // String value
+
+public:
+    String(const string v){
+        value = v;
+    }
+
+    const string getValue(){
+        return value;
+    }
+
+    virtual string toStr() override{
+        return value;
+    }
+};
+
+class True: public Node{
+protected:
+
+public:
+    True(){}
+
+    virtual string toStr() override{
+        return "true";
+    }
+
+    virtual string toDebug() override{
+        return toStr();
+    }
+};
+
+class False: public Node{
+protected:
+
+public:
+    False(){}
+
+    virtual string toStr() override{
+        return "false";
+    }
+
+    virtual string toDebug() override{
+        return toStr();
+    }
+};
+
+// Represents a variable
+class Variable : public Node
+{
+protected:
+    TypeDec *type;
+    string name;
+    Node *value;
+
+public:
+    Variable(TypeDec *t,const string n, Node *v)
+    {
+        type = t;
+        name = n;
+        value = v;
+        children.push_back(t);
+        children.push_back(v);
+    }
+
+    const string getName(){
+        return name;
+    }
+
+    virtual string toDebug() override{
+        return type->toStr() + name + "=" + value->toDebug();
+    }
+
+    virtual string toStr() override
+    {
+        return  name + "=";
+    }
+
+    
+};
+
+class Attribution : public Node
+{
 protected:
     string name;
     Node *value;
+
 public:
-    Variable(const string n, Node *v) {
+    Attribution(const string n, Node *v)
+    {
         name = n;
         value = v;
         children.push_back(v);
     }
 
-    const string getName() {
+    const string getName(){
         return name;
     }
 
-    virtual string toStr() override {
-        return name + "=";
+    virtual string toStr() override
+    {
+        return  name + "=";
+    }
+
+    virtual string toDebug() override{
+        return name + "=" + value->toDebug();
     }
 };
 
+// Represents a unary operation
 class Unary : public Node {
 protected:
-    Node *value;
-    char operation;
+    Node *value; // Operand
+    char operation; // Unary operator
 
 public:
     Unary(Node *v, char op) {
@@ -159,6 +261,7 @@ public:
     }
 };
 
+// Represents a binary operation
 class BinaryOp : public Node {
 protected:
     Node *value1;
@@ -181,13 +284,12 @@ public:
     }
 };
 
-
-class Condition : public Node
-{
+// Represents a conditional expression
+class Condition : public Node {
 protected:
-    Node *value1;
-    Node *value2;
-    string operation;
+    Node *value1; // First operand
+    Node *value2; // Second operand
+    string operation; // Condition operator
 
 public:
     Condition(Node *v1, Node *v2, string op){
@@ -196,7 +298,6 @@ public:
         operation = op;
         children.push_back(v1);
         children.push_back(v2);
-
     }
 
     virtual string toStr() override{   
@@ -208,63 +309,11 @@ public:
     }
 };
 
-class String : public Node{
-protected:
-    string value;
-
-public:
-    String(const string v){
-        value = v;
-    }
-
-    const string getValue(){
-        return value;
-    }
-
-    virtual string toStr() override{
-        return value;
-    }
-};
-
-class Scan: public Node{
-protected:
-    string value;
-
-public:
-    Scan(const string v){
-        value = v;
-    }
-
-    const string getValue(){
-       return value;
-    }
-
-    virtual string toStr() override{
-        value = "scan";
-        return value;
-    }
-};
-
-
-class Print : public Node {
-protected:
-    Node *value;
-
-public:
-    Print(Node *v) {
-        value = v;
-        children.push_back(v);
-    }
-
-    virtual string toStr() {
-        return "print";
-    }
-};
-
+// Represents a variable declaration
 class Declaration : public Node {
 protected:
-    string name;
-    Node *value;
+    string name; // Variable name
+    Node *value; // Variable value
 
 public:
     Declaration(const string n, Node *v) {
@@ -282,10 +331,11 @@ public:
     }
 };
 
+// Represents a pass operation (no-op)
 class Pass : public Node {
 protected:
-    string ident;
-    string operation;
+    string ident; // Identifier
+    string operation; // Operation
 
 public:
     Pass(string id, string op) : ident(id), operation(op) {}
@@ -295,11 +345,11 @@ public:
     }
 };
 
-
+// Represents an if statement
 class If : public Node {
 private:
-    Node *condition;
-    Node *body;
+    Node *condition; // Condition
+    Node *body; // If body
 
 public:
     If(Node *cond, Node *b) : condition(cond), body(b) {
@@ -312,11 +362,12 @@ public:
     }
 };
 
+// Represents an if-else statement
 class IfElse : public Node {
 private:
-    Node *condition;
-    Node *if_body;
-    Node *else_body;
+    Node *condition; // Condition
+    Node *if_body; // If body
+    Node *else_body; // Else body
 
 public:
     IfElse(Node *cond, Node *ifb, Node *elseb) : condition(cond), if_body(ifb), else_body(elseb) {
@@ -330,13 +381,13 @@ public:
     }
 };
 
-
+// Represents a loop statement
 class Loop : public Node {
 private:
-    Node *declaration;
-    Node *condition;
-    Node *postLoop;
-    Node *body;
+    Node *declaration; // Initialization
+    Node *condition; // Loop condition
+    Node *postLoop; // Post-loop operation
+    Node *body; // Loop body
 
 public:
     Loop(Node *decl, Node *cond, Node *pass, Node *globals) : declaration(decl), condition(cond), postLoop(pass), body(globals) {
@@ -351,103 +402,130 @@ public:
     }
 };
 
-class CheckVarDecl {
-private:
-    set<string> symbols;
+// Represents a scan operation (input)
+class Scan: public Node {
+protected:
+    string value; // Input value
 
 public:
-    CheckVarDecl() {}
+    Scan(const string v){
+        value = v;
+    }
+
+    const string getValue(){
+       return value;
+    }
+
+    virtual string toStr() override{
+        value = "scan";
+        return value;
+    }
+};
+
+// Represents a print operation (output)
+class Print : public Node {
+protected:
+    Node *value; // Value to print
+
+public:
+    Print(Node *v) {
+        value = v;
+        children.push_back(v);
+    }
+
+    virtual string toStr() {
+        return "print";
+    }
+};
+
+// Semantic checker for variable declarations and operations
+class CheckVarDecl {
+private:
+    stack<set<string>> symbolTableStack;
+
+public:
+    CheckVarDecl() {
+        symbolTableStack.push(set<string>()); // Global scope
+    }
+
+    void enterScope() {
+        symbolTableStack.push(set<string>());
+    }
+
+    void exitScope() {
+        if (!symbolTableStack.empty()) {
+            symbolTableStack.pop();
+        }
+    }
+
+    bool isDeclared(const string& name) {
+        vector<set<string>> temp; // Vector temporário para armazenar os elementos da pilha
+        bool found = false;
+
+        // Transferir elementos da pilha para o vetor temporário
+        while (!symbolTableStack.empty()) {
+            temp.push_back(symbolTableStack.top());
+            symbolTableStack.pop();
+        }
+
+        // Procurar pelo nome no vetor temporário
+        for (auto it = temp.rbegin(); it != temp.rend(); ++it) {
+            if (it->count(name) > 0) {
+                found = true;
+                break;
+            }
+        }
+
+        // Transferir de volta os elementos para a pilha original
+        for (auto it = temp.rbegin(); it != temp.rend(); ++it) {
+            symbolTableStack.push(*it);
+        }
+
+        return found;
+    }
+
+    void declare(const string& name) {
+        if (!symbolTableStack.empty()) {
+            symbolTableStack.top().insert(name);
+        }
+    }
 
     void check(Node *node) {
+        if (!node) return;
+
         for (Node *child : node->getChildren()) {
             check(child);
         }
 
-        Ident *id = dynamic_cast<Ident*>(node);
-        if (id) {
-            if (symbols.count(id->getName()) <= 0) {
-                cout << build_file_name
-                     << ":"
-                     << id->getLineNo()
-                     << ":0: semantic error: " 
-                     << id->getName()
-                     << " undefined."
-                     << endl;
-                errorcount++;
-            }
-        }
-
-        Variable *var = dynamic_cast<Variable*>(node);
-        if (var) {
-            symbols.insert(var->getName());
-        }
-
-        BinaryOp *binOp = dynamic_cast<BinaryOp*>(node);
-        if (binOp) {
-            if (!typeCheck(binOp)) {
-                cout << build_file_name
-                     << ":"
-                     << binOp->getLineNo()
-                     << ":0: semantic error: Invalid operand types for operator "
-                     << binOp->toStr()
-                     << endl;
-                errorcount++;
-            }
-        }
-        
-        Unary *unOp = dynamic_cast<Unary*>(node);
-        if (unOp) {
-            if (!typeCheck(unOp)) {
-                cout << build_file_name
-                     << ":"
-                     << unOp->getLineNo()
-                     << ":0: semantic error: Invalid operand type for operator "
-                     << unOp->toStr()
-                     << endl;
-                errorcount++;
-            }
-        }
+        // Implementação de verificação semântica aqui...
     }
-
-   bool typeCheck(BinaryOp *op) {
-    Node *left = op->getChildren()[0];
-    Node *right = op->getChildren()[1];
-
-    Integer *intLeft = dynamic_cast<Integer*>(left);
-    Integer *intRight = dynamic_cast<Integer*>(right);
-    if (intLeft && intRight) {
-        return true; 
-    }
-    return false;
-}
-
-bool typeCheck(Unary *op) {
-    Node *operand = op->getChildren()[0];
-
-    Boolean *boolOperand = dynamic_cast<Boolean*>(operand);
-    if (boolOperand) {
-        return true; 
-    }
-    return false;
-}
-
 };
 
+// Functions to print the syntax tree
 void printf_tree_recursive(Node *noh) {
-    for(Node *c : noh->getChildren()) {
+    if (noh == nullptr) {
+        cout << "Node is null" << endl;
+        return;
+    }
+    for (Node *c : noh->getChildren()) {
         printf_tree_recursive(c);
     }
     cout << "N" << (long int)noh << "[label=\"" <<
         noh->toStr() << "\"];" << endl;
-    
-    for(Node *c : noh->getChildren()) {
-        cout << "N" << (long int)noh << "--" <<
-            "N" << (long int)c << ";" << endl;
-    }
 
+    for (Node *c : noh->getChildren()) {
+        if (c != nullptr) {
+            cout << "N" << (long int)noh << "--" <<
+                "N" << (long int)c << ";" << endl;
+        }
+    }
 }
 
 void printf_tree(Node *root) {
+    if (root == nullptr) {
+        cout << "Root is null" << endl;
+        return;
+    }
     cout << "graph {" << endl;
     printf_tree_recursive(root);
     cout << "}" << endl;

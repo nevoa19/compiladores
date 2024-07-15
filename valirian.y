@@ -46,40 +46,58 @@ extern bool force_print_tree;
 %type<flt> TOK_FLOAT
 %type<node> globals global expr term factor unary pass opr decl der if print scan
 
+%printer { fprintf(yyo, "%s", $$);} <str>
+%printer { fprintf(yyo, "%d", $$);} <itg>
+%printer { fprintf(yyo, "%f", $$);} <flt>
+%printer { fprintf(yyo, "%s", $$-> toDebug().c_str());} <node>
+
 %start program
 
 %%
+
 
 program : globals {
    Node *program = new Program();
     program->append($globals);
 
+    cout << "Checking variable declarations..." << endl;
     CheckVarDecl cvd;
     cvd.check(program);
-    
-    if(errorcount>0)
-        cout << errorcount << " error(s) found" <<endl;
-    if(force_print_tree || errorcount ==0)
+
+    cout << "deu..." << endl;
+
+    if (errorcount > 0)
+        cout << errorcount << " error(s) found" << endl;
+    if (force_print_tree || errorcount == 0)
         printf_tree(program);
+    else
+        cout << "Errors found, not printing the tree." << endl;
 }
 
+
 globals : globals[gg] global {
+    cout << "deu 1 globals globals global..." << endl;
     $gg->append($global);
+    cout << "deu2..." << endl;
     $$ = $gg;
+    cout << "deu3..." << endl;
 }
 
 globals : global {
+    cout << "deu?" << endl;
     Node *n = new Node();
+    cout << "deu!?" << endl;
     n->append($global);
+    cout << "deu3..." << endl;
     $$ = n;
+    cout << "deu3!!!" << endl;
 }
 
-global : TOK_IDENT '=' der ';' {
-    $$ = new Variable($TOK_IDENT, $der);
+global : TOK_IDENT '=' expr ';' {
+    $$ = new Attribution($TOK_IDENT, $expr);
 }
 
 global : TOK_IDENT '=' scan ';' {
-    $$ = new Variable($TOK_IDENT, $scan);
 }
 
 global : if {
@@ -114,10 +132,6 @@ term : term[tt] '/' factor {
     $$ = new BinaryOp($tt, $factor, '/');
 }
 
-term : term[tt] '%' factor{
-    $$ = new BinaryOp($tt, $factor, '%');
-}
-
 term : factor {
     $$ = $factor;
 }
@@ -127,23 +141,28 @@ factor : '(' expr ')' {
 }
 
 factor : TOK_IDENT[str] {
+    cout << "deu????" << endl;
     $$ = new Ident($str);
 }
 
 factor : TOK_INT[itg] {
+    cout << "deu????" << endl;
     $$ = new Integer($itg);
 }
 
 factor : TOK_FLOAT[flt] {
+    cout << "deu????" << endl;
     $$ = new Float($flt);
 }
 
-factor : TOK_TRUE{
-    $$ = new Boolean(true);
+factor : TOK_TRUE[str]{
+    cout << "deu????" << endl;
+    $$ = new True();
 }
 
-factor : TOK_FALSE{
-    $$ = new Boolean(false);
+factor : TOK_FALSE[str]{
+    cout << "deu????" << endl;
+    $$ = new False();
 }
 
 factor : unary[u] {
@@ -154,7 +173,7 @@ unary : '-' factor[f] {
     $$ = new Unary($f, '-');
 }
 
-global : TOK_LOOP '(' decl opr ';' pass ')' '{' globals '}'{
+global : TOK_LOOP '(' decl cond ';' pass ')' '{' globals '}'{
     $$ = new Loop($decl, $opr, $pass, $globals);
 }
 
@@ -166,91 +185,84 @@ pass : TOK_IDENT TOK_INC {
     $$ = new Pass($TOK_IDENT, "++");
 }
 
-
-opr : expr[ee1] TOK_DIFE expr[ee2] {
-    $$ = new Condition($ee1, $ee2, "!=");
+opr : TOK_MENORI {
+    $$ = $TOK_MENORI;
 }
 
-opr : expr[ee1] TOK_MAIORI expr[ee2] {
-    $$ = new Condition($ee1, $ee2, ">=");
+opr : TOK_MAIORI {
+    $$ = $TOK_MAIORI;
 }
 
-opr : expr[ee1] TOK_MENORI expr[ee2] {
-    $$ = new Condition($ee1, $ee2, "<=");
+opr : TOK_IGUAL {
+    $$ = $TOK_IGUAL;
 }
 
-opr : expr[ee1] TOK_IGUAL expr[ee2] {
-    $$ = new Condition($ee1, $ee2, "==");
+opr : TOK_DIFE{
+    $$ = $TOK_DIFE;
 }
 
-opr : expr[ee1] '<' expr[ee2] {
-   $$ = new BinaryOp($ee1, $ee2, '<');
+opr : '<' {
+    $$ = "<";
+}
+opr : '>' {
+    $$ = ">";
 }
 
-opr : expr[ee1] '>' expr[ee2]{
-    $$ = new BinaryOp($ee1, $ee2, '>');
+cond : factor[ee1] opr factor[ee2] {
+    $$ = new Condition($ee1, $ee2, $opr);
 }
 
-opr : '(' opr[ee1] TOK_OR opr[ee2] ')' {
-   $$ = new Condition($ee1, $ee2, "||");
+cond : '('cond TOK_OR cond ')'{
 }
 
-opr : '(' opr[ee1] TOK_AND opr[ee2] ')' {
-  $$ = new Condition($ee1, $ee2, "&&");
-}
-
-tip : TOK_TIPOBOOL {
-    $$ = 3;
-}
-
-tip : TOK_TIPOSTRING {
-    $$ = 4;
-}
-
-tip : TOK_TIPOFLOAT {
-    $$ = 2;
-}
-
-tip : TOK_TIPOINT {
-    $$ = 1;
+cond : '('cond TOK_AND cond ')'{
 }
 
 decl : tip TOK_IDENT '=' der ';'{
-    $$ = new Declaration($TOK_IDENT, $der);
+    cout << "deu???????" << endl;
+    cout << "nao deu :c" << endl;
+    $$ = new Variable(new TypeDec($tip), $TOK_IDENT, $der);
+    cout << "deu simmm!" << endl;
 }
 
 decl : tip TOK_IDENT '=' scan ';'{
-    $$ = new Declaration($TOK_IDENT, $scan);
 }
 
-der : expr {
-    $$ = $expr;
-}
-| TOK_STRING {
-    $$ = new Ident($TOK_STRING);
+der : expr | TOK_STRING {
 }
 
-if : TOK_IF '(' opr ')' '{' globals '}' {
-    $$ = new If($opr, $globals);
+if : TOK_IF '('  cond  ')' '{' globals '}'{
 }
 
-if : TOK_IF '(' opr ')' '{' globals[ee1] '}' TOK_ELSE '{' globals[ee2] '}' { 
-    $$ = new IfElse($opr, $ee1, $ee2);
-    }
+if : TOK_IF '('  cond  ')' '{' globals '}' TOK_ELSE '{' globals '}'{
+}
 
+if : TOK_IF '('  cond  ')' '{' globals '}' TOK_ELSE if{
+}
 
 print : TOK_PRINT '(' TOK_STRING ')' ';'{
-    String *value = new String($TOK_STRING);
-    $$ = new Print(value);
 }
 
 print : TOK_PRINT '(' TOK_IDENT ')' ';'{
-    Ident *id = new Ident($TOK_IDENT);
-    $$ = new Print(id);
+}
+
+tip : TOK_TIPOBOOL{
+    $$ = 3;
+}
+
+tip : TOK_TIPOSTRING{
+    $$ = 4;
+}
+
+tip : TOK_TIPOFLOAT{
+    $$ = 2;
+}
+
+tip : TOK_TIPOINT{
+    $$ = 1;
 }
 
 scan : TOK_SCAN '(' tip ')'{
-    $$ = new Scan($TOK_SCAN);
 }
 
 %%
