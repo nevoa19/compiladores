@@ -1,0 +1,8 @@
+giez a = 10;
+giez b = 5;
+
+lo((a < 5)||(b > 10)){
+    bardugon("falso");
+}daor{
+    bardugon("verdadeiro");
+}

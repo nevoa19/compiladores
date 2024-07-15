@@ -1,0 +1,8 @@
+C = 1+;
+bardugon (C);
+
+syt(giez i=0; i>=C; i++){
+    
+    F = 5
+
+    }

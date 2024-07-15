@@ -1,0 +1,28 @@
+//este é um comentario
+
+engos m = "maria";
+
+giez A = 10 +10 -3 ;
+bevumbagon B = (20.5 + (10.7 * 2)) / 15;
+C = A + B;
+bardugon (C);
+
+giez t = pikibagon (giez);
+
+syt(giez i=0; i>=C; i++){
+    
+    F = 5;
+
+    }
+
+lo(C > A){
+    bardugon(B);
+}daor{
+    bardugon(A);
+}
+
+lo(C > A){
+    bardugon(B);
+}daor lo(F==C){
+    bardugon(C);
+}

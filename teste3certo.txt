@@ -1,0 +1,52 @@
+giez a = 10;
+giez b = 5;
+
+giez soma = a + b;
+giez subtracao = a - b;
+giez multiplicacao = a * b;
+giez divisao = a / b;
+
+
+lo(a > b){
+    bardugon("falso");
+}daor{
+    bardugon("verdadeiro");
+}
+
+lo(a < b){
+    bardugon("falso");
+}daor{
+    bardugon("verdadeiro");
+}
+
+lo(a != b){
+    bardugon("falso");
+}daor{
+    bardugon("verdadeiro");
+}
+
+lo(a >= b){
+    bardugon("falso");
+}daor{
+    bardugon("verdadeiro");
+}
+
+lo((a > 5 && b < 10)){
+    bardugon("falso");
+}daor{
+    bardugon("verdadeiro");
+}
+
+lo((a < 5 || b > 10)){
+    bardugon("falso");
+}daor{
+    bardugon("verdadeiro");
+}
+
+lo(a <= b){
+    bardugon("falso");
+}daor{
+    bardugon("verdadeiro");
+}
+
+
