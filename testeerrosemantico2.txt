@@ -1,0 +1,5 @@
+giez x = 0;
+
+syt (giez i = 1; i <= 10; i++) {
+    y = y + i;
+}

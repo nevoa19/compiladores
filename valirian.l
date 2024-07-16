@@ -59,18 +59,22 @@ int yyerror(const char *s);
 "%" { return '%'; }
 
 \"[a-zA-Z0-9_' ']+\" {
+    yylval.str = strndup(yytext,yyleng);
     return TOK_STRING;
 }
 
 [a-zA-Z_][a-zA-Z0-9_]* {
+    yylval.str = strndup(yytext,yyleng);
     return TOK_IDENT;
 }
 
 [0-9]+\.[0-9]* {
+	yylval.flt = atof(yytext);
     return TOK_FLOAT;
 }
 
 [0-9]+ {
+    yylval.itg = atoi(yytext);
     return TOK_INT;
 }
 
@@ -104,6 +108,7 @@ int main(int argc, char *argv[]){
 		build_file_id++;
 	}
 
+    build_file_name = argv[build_file_id];
     yyin = fopen(argv[1], "r");
     if (yyin == NULL){
         printf("Não foi possível abrir o arquivo %s.\n", argv[1]);

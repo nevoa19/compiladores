@@ -85,9 +85,9 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 13 "valirian.y"
+#line 12 "valirian.y"
 
-    char *str;
+    const char *str;
     int itg;
     double flt;
     Node *node;

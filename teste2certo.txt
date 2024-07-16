@@ -1,16 +1,12 @@
-iderennon estaChovendo = dreje;
-iderennon temSol = pirta;
-        
-        // Verificando condições e imprimindo mensagens correspondentes
-        lo (estaChovendo == dreje) {
-            bardugon("e melhor levar um guarda chuva");
-        } daor {
-            bardugon("O tempo esta bom nao e necessario guarda chuva");
-        }
-        
-        lo (temSol == pirta) {
-            bardugon("Esta ensolarado la fora");
-        } daor {
-            bardugon("O sol se escondeu esta nublado ou chovendo");
-        }
-    
+// Declaração de variáveis
+giez x = 10;
+giez y = 20;
+iderennon resultado = pirta;
+
+lo (x < y) {
+    iderennon resultado = dreje; // verdadeiro
+} daor {
+    iderennon resultado = pirta; // falso
+}
+
+bardugon(resultado);

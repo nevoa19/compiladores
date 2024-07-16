@@ -1,28 +1,6 @@
-//este é um comentario
+giez soma = pikibagon(giez);
 
-engos m = "maria";
-
-giez A = 10 +10 -3 ;
-bevumbagon B = (20.5 + (10.7 * 2)) / 15;
-C = A + B;
-bardugon (C);
-
-giez t = pikibagon (giez);
-
-syt(giez i=0; i>=C; i++){
-    
-    F = 5;
-
-    }
-
-lo(C > A){
-    bardugon(B);
-}daor{
-    bardugon(A);
-}
-
-lo(C > A){
-    bardugon(B);
-}daor lo(F==C){
-    bardugon(C);
+// Loop para somar números de 1 a 10
+syt (giez i = 1; i <= 10; i++) {
+    soma = soma + i;
 }

@@ -1009,43 +1009,47 @@ case 35:
 YY_RULE_SETUP
 #line 61 "valirian.l"
 {
+    yylval.str = strndup(yytext,yyleng);
     return TOK_STRING;
 }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 65 "valirian.l"
+#line 66 "valirian.l"
 {
+    yylval.str = strndup(yytext,yyleng);
     return TOK_IDENT;
 }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 69 "valirian.l"
+#line 71 "valirian.l"
 {
+	yylval.flt = atof(yytext);
     return TOK_FLOAT;
 }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 73 "valirian.l"
+#line 76 "valirian.l"
 {
+    yylval.itg = atoi(yytext);
     return TOK_INT;
 }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 77 "valirian.l"
+#line 81 "valirian.l"
 {
     printf("Simbolo nao reconhecido%c\n", yytext[0]);
     }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 82 "valirian.l"
+#line 86 "valirian.l"
 ECHO;
 	YY_BREAK
-#line 1049 "lex.yy.c"
+#line 1053 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2062,7 +2066,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 82 "valirian.l"
+#line 86 "valirian.l"
 
 
 int yywrap() {
@@ -2088,6 +2092,7 @@ int main(int argc, char *argv[]){
 		build_file_id++;
 	}
 
+    build_file_name = argv[build_file_id];
     yyin = fopen(argv[1], "r");
     if (yyin == NULL){
         printf("Não foi possível abrir o arquivo %s.\n", argv[1]);

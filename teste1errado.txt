@@ -1,8 +1,7 @@
-giez a = 10;
-giez b = 5;
+// Declaração de variável
+giez i = 0;
 
-lo((a < 5)||(b > 10)){
-    bardugon("falso");
-}daor{
-    bardugon("verdadeiro");
+// Loop com erro de parênteses
+syt (giez i = 1; i <= 10; i++ {
+    i = i + 1;
 }

@@ -10,11 +10,10 @@ extern char *build_file_name;
 
 using namespace std;
 
-// Base class for all nodes
 class Node {
 protected:
-    vector<Node*> children; // Child nodes
-    int lineno; // Line number where the node is found
+    vector<Node*> children; 
+    int lineno;
 
 public:
     Node() {
@@ -37,7 +36,6 @@ public:
     }
 };
 
-// Represents the entire program
 class Program : public Node {
 public:
     virtual string toStr() override {
@@ -45,30 +43,28 @@ public:
     }
 };
 
-// Represents a type declaration
 class TypeDec : public Node {
 protected:
-    int type; // Type identifier
+    string type; 
 
 public:
-    TypeDec(int t){
+    TypeDec(string t){
         type = t;
     }
     virtual string toStr() override{
-        if (type == 1) {
-            return "giez";
-        } else if (type == 2) {
-            return "bevumbagon";
-        } else if (type == 3) {
-            return "iderennon";
-        } else if (type == 4) {
-            return "engos";
+        if (type == "int") {
+            return "int";
+        } else if (type == "float") {
+            return "float";
+        } else if (type == "string") {
+            return "string";
+        } else if (type == "bool") {
+            return "bool";
         } 
         else return "sem tipo";
     }
 };
 
-// Represents an identifier
 class Ident : public Node{
 protected:
     string name;
@@ -87,10 +83,9 @@ public:
     }
 };
 
-// Represents an integer value
 class Integer : public Node {
 protected:
-    int value; // Integer value
+    int value; 
 
 public:
     Integer(const int v) {
@@ -102,10 +97,9 @@ public:
     }
 };
 
-// Represents a float value
 class Float : public Node {
 protected:
-    float value; // Float value
+    float value; 
 
 public:
     Float(const float v) {
@@ -117,10 +111,9 @@ public:
     }
 };
 
-// Represents a boolean value
 class Boolean : public Node {
 protected:
-    bool value; // Boolean value
+    bool value; 
 
 public:
     Boolean(bool v) : value(v) {}
@@ -130,10 +123,9 @@ public:
     }
 };
 
-// Represents a string value
 class String : public Node {
 protected:
-    string value; // String value
+    string value; 
 
 public:
     String(const string v){
@@ -179,7 +171,6 @@ public:
     }
 };
 
-// Represents a variable
 class Variable : public Node
 {
 protected:
@@ -209,8 +200,7 @@ public:
     {
         return  name + "=";
     }
-
-    
+  
 };
 
 class Attribution : public Node
@@ -241,11 +231,10 @@ public:
     }
 };
 
-// Represents a unary operation
 class Unary : public Node {
 protected:
-    Node *value; // Operand
-    char operation; // Unary operator
+    Node *value; 
+    char operation; 
 
 public:
     Unary(Node *v, char op) {
@@ -261,7 +250,6 @@ public:
     }
 };
 
-// Represents a binary operation
 class BinaryOp : public Node {
 protected:
     Node *value1;
@@ -284,12 +272,11 @@ public:
     }
 };
 
-// Represents a conditional expression
 class Condition : public Node {
 protected:
-    Node *value1; // First operand
-    Node *value2; // Second operand
-    string operation; // Condition operator
+    Node *value1; 
+    Node *value2; 
+    string operation; 
 
 public:
     Condition(Node *v1, Node *v2, string op){
@@ -309,33 +296,11 @@ public:
     }
 };
 
-// Represents a variable declaration
-class Declaration : public Node {
-protected:
-    string name; // Variable name
-    Node *value; // Variable value
 
-public:
-    Declaration(const string n, Node *v) {
-        name = n;
-        value = v;
-        children.push_back(v);
-    }
-
-    const string getName() {
-        return name;
-    }
-
-    virtual string toStr() override {
-        return "declaration";
-    }
-};
-
-// Represents a pass operation (no-op)
 class Pass : public Node {
 protected:
-    string ident; // Identifier
-    string operation; // Operation
+    string ident; 
+    string operation; 
 
 public:
     Pass(string id, string op) : ident(id), operation(op) {}
@@ -345,11 +310,10 @@ public:
     }
 };
 
-// Represents an if statement
 class If : public Node {
 private:
-    Node *condition; // Condition
-    Node *body; // If body
+    Node *condition; 
+    Node *body; 
 
 public:
     If(Node *cond, Node *b) : condition(cond), body(b) {
@@ -362,12 +326,11 @@ public:
     }
 };
 
-// Represents an if-else statement
 class IfElse : public Node {
 private:
-    Node *condition; // Condition
-    Node *if_body; // If body
-    Node *else_body; // Else body
+    Node *condition; 
+    Node *if_body; 
+    Node *else_body; 
 
 public:
     IfElse(Node *cond, Node *ifb, Node *elseb) : condition(cond), if_body(ifb), else_body(elseb) {
@@ -381,13 +344,12 @@ public:
     }
 };
 
-// Represents a loop statement
 class Loop : public Node {
 private:
-    Node *declaration; // Initialization
-    Node *condition; // Loop condition
-    Node *postLoop; // Post-loop operation
-    Node *body; // Loop body
+    Node *declaration; 
+    Node *condition; 
+    Node *postLoop; 
+    Node *body; 
 
 public:
     Loop(Node *decl, Node *cond, Node *pass, Node *globals) : declaration(decl), condition(cond), postLoop(pass), body(globals) {
@@ -402,106 +364,110 @@ public:
     }
 };
 
-// Represents a scan operation (input)
-class Scan: public Node {
+class Scan : public Node {
 protected:
-    string value; // Input value
-
+    Node *typeNode = NULL; 
 public:
-    Scan(const string v){
-        value = v;
+    Scan() {}
+    Scan(Node *t) : typeNode(t) {
+        children.push_back(t);
     }
 
-    const string getValue(){
-       return value;
+    Node* getTypeNode() {
+        return typeNode;
     }
 
-    virtual string toStr() override{
-        value = "scan";
-        return value;
+    virtual string toStr() override {
+        if (typeNode != NULL)
+            return "scan(" + typeNode->toStr() + ")";
+        else
+            return "sem tipo";
+    }
+
+    virtual string toDebug() override {
+        return toStr();
     }
 };
 
-// Represents a print operation (output)
+
 class Print : public Node {
 protected:
-    Node *value; // Value to print
+    Node *value; 
 
 public:
-    Print(Node *v) {
-        value = v;
+    Print(Node *v) : value(v) {
         children.push_back(v);
     }
 
-    virtual string toStr() {
+    virtual string toStr() override {
         return "print";
+    }
+
+    virtual string toDebug() override {
+        return "print(" + value->toDebug() + ")";
     }
 };
 
-// Semantic checker for variable declarations and operations
+
 class CheckVarDecl {
 private:
-    stack<set<string>> symbolTableStack;
-
+    set<string> symbols;
 public:
-    CheckVarDecl() {
-        symbolTableStack.push(set<string>()); // Global scope
-    }
+    CheckVarDecl() {}
 
-    void enterScope() {
-        symbolTableStack.push(set<string>());
-    }
-
-    void exitScope() {
-        if (!symbolTableStack.empty()) {
-            symbolTableStack.pop();
-        }
-    }
-
-    bool isDeclared(const string& name) {
-        vector<set<string>> temp; // Vector temporário para armazenar os elementos da pilha
-        bool found = false;
-
-        // Transferir elementos da pilha para o vetor temporário
-        while (!symbolTableStack.empty()) {
-            temp.push_back(symbolTableStack.top());
-            symbolTableStack.pop();
+    void check(Node *noh) {
+        for(Node *c : noh->getChildren()) {
+            check(c);
         }
 
-        // Procurar pelo nome no vetor temporário
-        for (auto it = temp.rbegin(); it != temp.rend(); ++it) {
-            if (it->count(name) > 0) {
-                found = true;
-                break;
+        Ident *id = dynamic_cast<Ident*>(noh);
+        if (id) {
+            if (symbols.count(id->getName()) <= 0) {
+                cout << build_file_name
+                     << ":"
+                     << id->getLineNo()
+                     << ":0: semantic error: " 
+                     << id->getName()
+                     << " undefined."
+                     << endl;
+                errorcount++;
             }
         }
 
-        // Transferir de volta os elementos para a pilha original
-        for (auto it = temp.rbegin(); it != temp.rend(); ++it) {
-            symbolTableStack.push(*it);
+        Variable *var = dynamic_cast<Variable*>(noh);
+        if (var) {
+            symbols.insert(var->getName());
         }
-
-        return found;
-    }
-
-    void declare(const string& name) {
-        if (!symbolTableStack.empty()) {
-            symbolTableStack.top().insert(name);
-        }
-    }
-
-    void check(Node *node) {
-        if (!node) return;
-
-        for (Node *child : node->getChildren()) {
-            check(child);
-        }
-
-        // Implementação de verificação semântica aqui...
     }
 };
 
-// Functions to print the syntax tree
+class CheckVarMix {
+private:
+public:
+    CheckVarMix() {}
+
+    void check(Node *noh) {
+        for(Node *c : noh->getChildren()) {
+            check(c);
+        }
+
+        BinaryOp *bo = dynamic_cast<BinaryOp*>(noh);
+        if (bo) {
+           Integer *i0 = dynamic_cast<Integer*>(noh->getChildren()[0]);
+           Integer *i1 = dynamic_cast<Integer*>(noh->getChildren()[1]);
+           if((i0 == NULL && i1 != NULL) || (i0 !=  NULL && i1 == NULL)){
+            cout << build_file_name
+                << ":"
+                << bo->getLineNo()
+                << ":0: semantic error: " 
+                << " tipo mesclado proibido."
+                << endl;
+                errorcount++;
+           } 
+        }
+    }
+};
+
 void printf_tree_recursive(Node *noh) {
     if (noh == nullptr) {
         cout << "Node is null" << endl;

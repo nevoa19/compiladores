@@ -1,0 +1,2 @@
+giez x = 10;
+giez resultado = x + y;
