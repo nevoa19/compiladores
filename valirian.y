@@ -56,7 +56,7 @@ extern bool force_print_tree;
 
 
 program : globals {
-   Node *program = new Program();
+    Node *program = new Program();
     program->append($globals);
 
     CheckVarDecl cvd;
@@ -65,8 +65,13 @@ program : globals {
     cout << "erros: " << errorcount << endl;
 
     CheckVarMix cvm;
-    cout << "Checking count declarations..." << endl;
+    cout << "Checking type mix declarations..." << endl;
     cvm.check(program);
+    cout << "erros: " << errorcount << endl;
+
+    CheckDuplicateVariable cdv;
+    cout << "Checking duplicate variable declarations..." << endl;
+    cdv.check(program, "global"); 
     cout << "erros: " << errorcount << endl;
 
     if (errorcount > 0)

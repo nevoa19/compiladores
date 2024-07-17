@@ -547,11 +547,11 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,    58,    58,    81,    86,    92,    96,   100,   104,   108,
-     112,   116,   120,   124,   128,   132,   136,   140,   144,   148,
-     152,   156,   160,   164,   168,   172,   176,   180,   184,   188,
-     192,   196,   200,   204,   208,   212,   216,   220,   224,   227,
-     231,   235,   239,   244,   249,   253,   257,   261,   265
+       0,    58,    58,    86,    91,    97,   101,   105,   109,   113,
+     117,   121,   125,   129,   133,   137,   141,   145,   149,   153,
+     157,   161,   165,   169,   173,   177,   181,   185,   189,   193,
+     197,   201,   205,   209,   213,   217,   221,   225,   229,   232,
+     236,   240,   244,   249,   254,   258,   262,   266,   270
 };
 #endif
 
@@ -1599,7 +1599,7 @@ yyreduce:
   case 2: /* program: globals  */
 #line 58 "valirian.y"
                   {
-   Node *program = new Program();
+    Node *program = new Program();
     program->append((yyvsp[0].node));
 
     CheckVarDecl cvd;
@@ -1608,8 +1608,13 @@ yyreduce:
     cout << "erros: " << errorcount << endl;
 
     CheckVarMix cvm;
-    cout << "Checking count declarations..." << endl;
+    cout << "Checking type mix declarations..." << endl;
     cvm.check(program);
+    cout << "erros: " << errorcount << endl;
+
+    CheckDuplicateVariable cdv;
+    cout << "Checking duplicate variable declarations..." << endl;
+    cdv.check(program, "global"); 
     cout << "erros: " << errorcount << endl;
 
     if (errorcount > 0)
@@ -1619,384 +1624,384 @@ yyreduce:
     else
         cout << "Errors found, not printing the tree." << endl;
 }
-#line 1623 "valirian.tab.c"
+#line 1628 "valirian.tab.c"
     break;
 
   case 3: /* globals: globals global  */
-#line 81 "valirian.y"
+#line 86 "valirian.y"
                              {
     (yyvsp[-1].node)->append((yyvsp[0].node));
     (yyval.node) = (yyvsp[-1].node);
 }
-#line 1632 "valirian.tab.c"
+#line 1637 "valirian.tab.c"
     break;
 
   case 4: /* globals: global  */
-#line 86 "valirian.y"
+#line 91 "valirian.y"
                  {
     Node *n = new Node();
     n->append((yyvsp[0].node));
     (yyval.node) = n;
 }
-#line 1642 "valirian.tab.c"
+#line 1647 "valirian.tab.c"
     break;
 
   case 5: /* global: TOK_IDENT '=' expr ';'  */
-#line 92 "valirian.y"
+#line 97 "valirian.y"
                                 {
     (yyval.node) = new Attribution((yyvsp[-3].str), (yyvsp[-1].node));
 }
-#line 1650 "valirian.tab.c"
+#line 1655 "valirian.tab.c"
     break;
 
   case 6: /* global: TOK_IDENT '=' scan ';'  */
-#line 96 "valirian.y"
+#line 101 "valirian.y"
                                 {
     (yyval.node) = new Scan();
 }
-#line 1658 "valirian.tab.c"
+#line 1663 "valirian.tab.c"
     break;
 
   case 7: /* global: if  */
-#line 100 "valirian.y"
+#line 105 "valirian.y"
             {
     (yyval.node) = (yyvsp[0].node);
 }
-#line 1666 "valirian.tab.c"
+#line 1671 "valirian.tab.c"
     break;
 
   case 8: /* global: print  */
-#line 104 "valirian.y"
+#line 109 "valirian.y"
               {
     (yyval.node) = (yyvsp[0].node);
 }
-#line 1674 "valirian.tab.c"
+#line 1679 "valirian.tab.c"
     break;
 
   case 9: /* global: decl  */
-#line 108 "valirian.y"
+#line 113 "valirian.y"
              {
     (yyval.node) = (yyvsp[0].node);
 }
-#line 1682 "valirian.tab.c"
+#line 1687 "valirian.tab.c"
     break;
 
   case 10: /* expr: expr '+' term  */
-#line 112 "valirian.y"
+#line 117 "valirian.y"
                          {
     (yyval.node) = new BinaryOp((yyvsp[-2].node), (yyvsp[0].node), '+');
 }
-#line 1690 "valirian.tab.c"
+#line 1695 "valirian.tab.c"
     break;
 
   case 11: /* expr: expr '-' term  */
-#line 116 "valirian.y"
+#line 121 "valirian.y"
                          {
     (yyval.node) = new BinaryOp((yyvsp[-2].node), (yyvsp[0].node), '-');
 }
-#line 1698 "valirian.tab.c"
+#line 1703 "valirian.tab.c"
     break;
 
   case 12: /* expr: term  */
-#line 120 "valirian.y"
+#line 125 "valirian.y"
             {
     (yyval.node) = (yyvsp[0].node);
 }
-#line 1706 "valirian.tab.c"
+#line 1711 "valirian.tab.c"
     break;
 
   case 13: /* term: term '*' factor  */
-#line 124 "valirian.y"
+#line 129 "valirian.y"
                            {
     (yyval.node) = new BinaryOp((yyvsp[-2].node), (yyvsp[0].node), '*');
 }
-#line 1714 "valirian.tab.c"
+#line 1719 "valirian.tab.c"
     break;
 
   case 14: /* term: term '/' factor  */
-#line 128 "valirian.y"
+#line 133 "valirian.y"
                            {
     (yyval.node) = new BinaryOp((yyvsp[-2].node), (yyvsp[0].node), '/');
 }
-#line 1722 "valirian.tab.c"
+#line 1727 "valirian.tab.c"
     break;
 
   case 15: /* term: term '%' factor  */
-#line 132 "valirian.y"
+#line 137 "valirian.y"
                            {
     (yyval.node) = new BinaryOp((yyvsp[-2].node), (yyvsp[0].node), '%');
 }
-#line 1730 "valirian.tab.c"
+#line 1735 "valirian.tab.c"
     break;
 
   case 16: /* term: factor  */
-#line 136 "valirian.y"
+#line 141 "valirian.y"
               {
     (yyval.node) = (yyvsp[0].node);
 }
-#line 1738 "valirian.tab.c"
+#line 1743 "valirian.tab.c"
     break;
 
   case 17: /* factor: '(' expr ')'  */
-#line 140 "valirian.y"
+#line 145 "valirian.y"
                       {
     (yyval.node) = (yyvsp[-1].node);
 }
-#line 1746 "valirian.tab.c"
+#line 1751 "valirian.tab.c"
     break;
 
   case 18: /* factor: TOK_IDENT  */
-#line 144 "valirian.y"
+#line 149 "valirian.y"
                         {
     (yyval.node) = new Ident((yyvsp[0].str));
 }
-#line 1754 "valirian.tab.c"
+#line 1759 "valirian.tab.c"
     break;
 
   case 19: /* factor: TOK_INT  */
-#line 148 "valirian.y"
+#line 153 "valirian.y"
                       {
     (yyval.node) = new Integer((yyvsp[0].itg));
 }
-#line 1762 "valirian.tab.c"
+#line 1767 "valirian.tab.c"
     break;
 
   case 20: /* factor: TOK_FLOAT  */
-#line 152 "valirian.y"
+#line 157 "valirian.y"
                         {
     (yyval.node) = new Float((yyvsp[0].flt));
 }
-#line 1770 "valirian.tab.c"
+#line 1775 "valirian.tab.c"
     break;
 
   case 21: /* factor: TOK_TRUE  */
-#line 156 "valirian.y"
+#line 161 "valirian.y"
                  {
     (yyval.node) = new True();
 }
-#line 1778 "valirian.tab.c"
+#line 1783 "valirian.tab.c"
     break;
 
   case 22: /* factor: TOK_FALSE  */
-#line 160 "valirian.y"
+#line 165 "valirian.y"
                   {
     (yyval.node) = new False();
 }
-#line 1786 "valirian.tab.c"
+#line 1791 "valirian.tab.c"
     break;
 
   case 23: /* factor: unary  */
-#line 164 "valirian.y"
+#line 169 "valirian.y"
                   {
     (yyval.node) = (yyvsp[0].node);
 }
-#line 1794 "valirian.tab.c"
+#line 1799 "valirian.tab.c"
     break;
 
   case 24: /* unary: '-' factor  */
-#line 168 "valirian.y"
+#line 173 "valirian.y"
                       {
     (yyval.node) = new Unary((yyvsp[0].node), '-');
 }
-#line 1802 "valirian.tab.c"
+#line 1807 "valirian.tab.c"
     break;
 
   case 25: /* global: TOK_LOOP '(' decl cond ';' pass ')' '{' globals '}'  */
-#line 172 "valirian.y"
+#line 177 "valirian.y"
                                                             {
     (yyval.node) = new Loop((yyvsp[-7].node), (yyvsp[-6].node), (yyvsp[-4].node), (yyvsp[-1].node));
 }
-#line 1810 "valirian.tab.c"
+#line 1815 "valirian.tab.c"
     break;
 
   case 26: /* pass: TOK_IDENT TOK_DEC  */
-#line 176 "valirian.y"
+#line 181 "valirian.y"
                          {
     (yyval.node) = new Pass((yyvsp[-1].str), "--");
 }
-#line 1818 "valirian.tab.c"
+#line 1823 "valirian.tab.c"
     break;
 
   case 27: /* pass: TOK_IDENT TOK_INC  */
-#line 180 "valirian.y"
+#line 185 "valirian.y"
                          {
     (yyval.node) = new Pass((yyvsp[-1].str), "++");
 }
-#line 1826 "valirian.tab.c"
+#line 1831 "valirian.tab.c"
     break;
 
   case 28: /* cond: factor TOK_MENORI factor  */
-#line 184 "valirian.y"
+#line 189 "valirian.y"
                                         {
     (yyval.node) = new Condition((yyvsp[-2].node), (yyvsp[0].node), "<=");
 }
-#line 1834 "valirian.tab.c"
+#line 1839 "valirian.tab.c"
     break;
 
   case 29: /* cond: factor TOK_MAIORI factor  */
-#line 188 "valirian.y"
+#line 193 "valirian.y"
                                         {
     (yyval.node) = new Condition((yyvsp[-2].node), (yyvsp[0].node), ">=");
 }
-#line 1842 "valirian.tab.c"
+#line 1847 "valirian.tab.c"
     break;
 
   case 30: /* cond: factor TOK_IGUAL factor  */
-#line 192 "valirian.y"
+#line 197 "valirian.y"
                                        {
     (yyval.node) = new Condition((yyvsp[-2].node), (yyvsp[0].node), "==");
 }
-#line 1850 "valirian.tab.c"
+#line 1855 "valirian.tab.c"
     break;
 
   case 31: /* cond: factor TOK_DIFE factor  */
-#line 196 "valirian.y"
+#line 201 "valirian.y"
                                       {
     (yyval.node) = new Condition((yyvsp[-2].node), (yyvsp[0].node), "!=");
 }
-#line 1858 "valirian.tab.c"
+#line 1863 "valirian.tab.c"
     break;
 
   case 32: /* cond: factor '<' factor  */
-#line 200 "valirian.y"
+#line 205 "valirian.y"
                                  {
     (yyval.node) = new Condition((yyvsp[-2].node), (yyvsp[0].node), "<");
 }
-#line 1866 "valirian.tab.c"
+#line 1871 "valirian.tab.c"
     break;
 
   case 33: /* cond: factor '>' factor  */
-#line 204 "valirian.y"
+#line 209 "valirian.y"
                                  {
     (yyval.node) = new Condition((yyvsp[-2].node), (yyvsp[0].node), ">");
 }
-#line 1874 "valirian.tab.c"
+#line 1879 "valirian.tab.c"
     break;
 
   case 34: /* cond: '(' cond TOK_OR cond ')'  */
-#line 208 "valirian.y"
+#line 213 "valirian.y"
                                       {
     (yyval.node) = new Condition((yyvsp[-3].node), (yyvsp[-1].node), "||");
 }
-#line 1882 "valirian.tab.c"
+#line 1887 "valirian.tab.c"
     break;
 
   case 35: /* cond: '(' cond TOK_AND cond ')'  */
-#line 212 "valirian.y"
+#line 217 "valirian.y"
                                        {
     (yyval.node) = new Condition((yyvsp[-3].node), (yyvsp[-1].node), "&&");
 }
-#line 1890 "valirian.tab.c"
+#line 1895 "valirian.tab.c"
     break;
 
   case 36: /* decl: tip TOK_IDENT '=' der ';'  */
-#line 216 "valirian.y"
+#line 221 "valirian.y"
                                 {
     (yyval.node) = new Variable(new TypeDec((yyvsp[-4].str)), (yyvsp[-3].str), (yyvsp[-1].node));
 }
-#line 1898 "valirian.tab.c"
+#line 1903 "valirian.tab.c"
     break;
 
   case 37: /* decl: tip TOK_IDENT '=' scan ';'  */
-#line 220 "valirian.y"
+#line 225 "valirian.y"
                                       {
     (yyval.node) = new Variable(new TypeDec((yyvsp[-4].str)), (yyvsp[-3].str), new Scan());
 }
-#line 1906 "valirian.tab.c"
+#line 1911 "valirian.tab.c"
     break;
 
   case 38: /* der: expr  */
-#line 224 "valirian.y"
+#line 229 "valirian.y"
            {
     (yyval.node) = (yyvsp[0].node); 
 }
-#line 1914 "valirian.tab.c"
+#line 1919 "valirian.tab.c"
     break;
 
   case 39: /* der: TOK_STRING  */
-#line 227 "valirian.y"
+#line 232 "valirian.y"
                   {
     (yyval.node) = new String((yyvsp[0].str));
 }
-#line 1922 "valirian.tab.c"
+#line 1927 "valirian.tab.c"
     break;
 
   case 40: /* if: TOK_IF '(' cond ')' '{' globals '}'  */
-#line 231 "valirian.y"
+#line 236 "valirian.y"
                                           {
     (yyval.node) = new If((yyvsp[-4].node), (yyvsp[-1].node));
 }
-#line 1930 "valirian.tab.c"
+#line 1935 "valirian.tab.c"
     break;
 
   case 41: /* if: TOK_IF '(' cond ')' '{' globals '}' TOK_ELSE '{' globals '}'  */
-#line 235 "valirian.y"
+#line 240 "valirian.y"
                                                                           { 
     (yyval.node) = new IfElse((yyvsp[-8].node), (yyvsp[-5].node), (yyvsp[-1].node));
     }
-#line 1938 "valirian.tab.c"
+#line 1943 "valirian.tab.c"
     break;
 
   case 42: /* print: TOK_PRINT '(' TOK_STRING ')' ';'  */
-#line 239 "valirian.y"
+#line 244 "valirian.y"
                                              {
     String *value = new String((yyvsp[-2].str));
     (yyval.node) = new Print(value);
 }
-#line 1947 "valirian.tab.c"
+#line 1952 "valirian.tab.c"
     break;
 
   case 43: /* print: TOK_PRINT '(' TOK_IDENT ')' ';'  */
-#line 244 "valirian.y"
+#line 249 "valirian.y"
                                             {
     Ident *id = new Ident((yyvsp[-2].str));
     (yyval.node) = new Print(id);
 }
-#line 1956 "valirian.tab.c"
+#line 1961 "valirian.tab.c"
     break;
 
   case 44: /* tip: TOK_TIPOBOOL  */
-#line 249 "valirian.y"
+#line 254 "valirian.y"
                   {
     (yyval.str) = "bool";
 }
-#line 1964 "valirian.tab.c"
+#line 1969 "valirian.tab.c"
     break;
 
   case 45: /* tip: TOK_TIPOSTRING  */
-#line 253 "valirian.y"
+#line 258 "valirian.y"
                     {
     (yyval.str) = "string";
 }
-#line 1972 "valirian.tab.c"
+#line 1977 "valirian.tab.c"
     break;
 
   case 46: /* tip: TOK_TIPOFLOAT  */
-#line 257 "valirian.y"
+#line 262 "valirian.y"
                    {
     (yyval.str) = "float";
 }
-#line 1980 "valirian.tab.c"
+#line 1985 "valirian.tab.c"
     break;
 
   case 47: /* tip: TOK_TIPOINT  */
-#line 261 "valirian.y"
+#line 266 "valirian.y"
                  {
     (yyval.str) = "int";
 }
-#line 1988 "valirian.tab.c"
+#line 1993 "valirian.tab.c"
     break;
 
   case 48: /* scan: TOK_SCAN '(' tip ')'  */
-#line 265 "valirian.y"
+#line 270 "valirian.y"
                            {
     (yyval.node) = new Scan(new TypeDec((yyvsp[-1].str)));
 }
-#line 1996 "valirian.tab.c"
+#line 2001 "valirian.tab.c"
     break;
 
 
-#line 2000 "valirian.tab.c"
+#line 2005 "valirian.tab.c"
 
       default: break;
     }
@@ -2220,4 +2225,4 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 269 "valirian.y"
+#line 274 "valirian.y"

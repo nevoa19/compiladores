@@ -1,2 +1,4 @@
-giez x = 10;
-giez resultado = x + y;
+giez a = 5;
+bevumbagon b = 3.14;
+bevumbagon a = 4.15;
+

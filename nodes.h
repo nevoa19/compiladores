@@ -468,6 +468,38 @@ public:
     }
 };
 
+class CheckDuplicateVariable {
+private:
+    map<string, set<string>> scopeSymbols;
+
+public:
+    CheckDuplicateVariable() {}
+
+    void check(Node *noh, string scope) {
+        for (Node *c : noh->getChildren()) {
+            check(c, scope);
+        }
+
+        Variable *var = dynamic_cast<Variable*>(noh);
+        if (var) {
+            if (scopeSymbols[scope].count(var->getName()) > 0) {
+                cout << build_file_name
+                     << ":"
+                     << var->getLineNo()
+                     << ":0: semantic error: "
+                     << "variável duplicada: " 
+                     << var->getName()
+                     << endl;
+                errorcount++;
+            } else {
+                scopeSymbols[scope].insert(var->getName());
+            }
+        }
+    }
+};
+
+
+
 void printf_tree_recursive(Node *noh) {
     if (noh == nullptr) {
         cout << "Node is null" << endl;
