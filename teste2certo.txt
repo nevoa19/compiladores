@@ -4,9 +4,9 @@ giez y = 20;
 iderennon resultado = pirta;
 
 lo (x < y) {
-    iderennon resultado = dreje; // verdadeiro
+     resultado = dreje; // verdadeiro
 } daor {
-    iderennon resultado = pirta; // falso
+     resultado = pirta; // falso
 }
 
 bardugon(resultado);
